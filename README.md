@@ -32,8 +32,10 @@ entire database during the time of the query. But that's only an excersize :)
 Documentation can be found at [godoc](https://godoc.org/github.com/budden/rlj)
 
 There are some tests. We call them integration test because we use a real database connection. 
-Be careful, tests flush the default redis database. We have 100% coverage on one package only, 
-and only some coverage for the whole program.
+
+Be careful, TESTS AND MAIN PROGRAM FLUSH THE DEFAULT REDIS DATABASE. 
+
+We have 100% coverage on one package only, and only some coverage for the whole program.
 
 Main application creates about 5 records, joins them and prints the result. 
 
