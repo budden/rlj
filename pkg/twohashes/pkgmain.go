@@ -3,30 +3,23 @@ package twohashes
 
 import (
 	"fmt"
-	"log"
 	"math/big"
 
 	"github.com/go-redis/redis"
-	"github.com/pkg/errors"
 
 	"github.com/budden/rlj/pkg/redisclient"
+	u "github.com/budden/rlj/pkg/rljutil"
 )
-
-// FatalIf rasies fatal error if err is not nil
-func FatalIf(err error, format string, args ...interface{}) {
-	if err != nil {
-		log.Fatal(errors.Wrapf(err, format, args...))
-	}
-}
 
 // Run joins two hashes. Inspired by https://redis.io/topics/indexes
 func Run() {
 	rc, err := redisclient.MakeNewClient()
-	FatalIf(err, "Failed to open redis client")
+	u.FatalIf(err, "Failed to open redis client")
 
 	err = flushAndFillDb(rc)
-	FatalIf(err, "Failed to fill db")
+	u.FatalIf(err, "Failed to fill db")
 
+	PrintJoinedOrders(rc)
 }
 
 func flushAndFillDb(rc *redis.Client) (err error) {
@@ -60,17 +53,24 @@ func flushAndFillDb(rc *redis.Client) (err error) {
 	return
 }
 
-// PrintJoinedOrders prints a join of clients to orders
+// PrintJoinedOrders prints a sort of left join of clients to orders.
+// There is a flaw here. We lock orders once for each client,
+// so orders can change during our query. Also orders can change
+// between we time we get clients and the time we get orders.
+// But this is still an excercise :) In real world, we might lock the entier
+// database, or lock both tables, or use multi-version architecture like
+// in postgres.
 func PrintJoinedOrders(rc *redis.Client) (err error) {
-	var clientsStrings map[string]string
-	clientsStrings, err = rc.HGetAll("client").Result()
-	if err != nil {
-		return
+	var clients []*Client
+	clients, err = GetAllClients(rc)
+	u.FatalIf(err, "Failed to get clients")
+	for _, client := range clients {
+		var orders []*Order
+		orders, err = GetOrdersByClientid(rc, client.ID)
+		u.FatalIf(err, "Failed to get orders for client id %d", client.ID)
+		for _, order := range orders {
+			fmt.Printf("%v <=> %v\n", client, order)
+		}
 	}
-	fmt.Print(clientsStrings)
 	return
-	//for clientID, clientString = range {
-	//
-	//}
-
 }
