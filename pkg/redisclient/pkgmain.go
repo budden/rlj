@@ -1,4 +1,4 @@
-// Package redisclient is a minimal wrapper around github.com/go-redis/redis
+// Package redisclient is a minimal wrapper around redis.NewClient
 package redisclient
 
 import (
