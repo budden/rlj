@@ -21,17 +21,17 @@ create index order_by_clientid by [order]
 Actually it is not just an "index" (btree), but a hash clustered index, but that does not matter much.
 So we have two copies of orders data - one indexed by primary key (id) and another one indexed by clientid.
 
-To implement left join, we scal all clients and join orders to them via order_by_clientid index.
+To implement left join, we scan all clients and join orders to them via order_by_clientid index.
 
-To add records safely, we had to introduce a lock at the order table to make sure that no more that one
-client has an access to the table's data. So, `insert into order` is "thread safe". OTOH, 
+To add and access orders safely, we had to introduce a lock at the order table to make sure that no more 
+that one client has an access to the table's data. So, `insert into order` is "thread safe". OTOH, 
 retrieveing data is not thread safe. Other clients can write to either table while we're doing the query. 
 We only lock the time when we read one bucket in our index, but we don't lock the entire table or
 entire database during the time of the query. But that's only an excersize :) 
 
 Documentation can be found at [godoc](https://godoc.org/github.com/budden/rlj)
 
-There are some tests. We call them integration test because we use a real database connection. 
+There are some tests. We call them integration tests because we use a real database connection. 
 
 Be careful, TESTS AND MAIN PROGRAM FLUSH THE DEFAULT REDIS DATABASE. 
 
