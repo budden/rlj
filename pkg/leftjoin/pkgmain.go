@@ -1,5 +1,5 @@
-// Package twohashes will demonstrate how to left join two data sets in hashes
-package twohashes
+// Package leftjoin defines two 'tables' and implements a 'left join' between them
+package leftjoin
 
 import (
 	"fmt"

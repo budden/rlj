@@ -38,6 +38,8 @@ and only some coverage for the whole program.
 Main application creates about 5 records, joins them and prints the result. 
 
 Development was Google driven, there are references to knowledge sources around the code.
+The main idea is from [Secondary indexing with Redis](https://redis.io/topics/indexes) which 
+is a part of official redis documentation. 
 
 Obviously, performance sucks. We expect it to be a sort of `O(#clients * #orders-per-client * Log(#clients * #orders-per-client * #keys in the database))`, 
 but there is a network roundtrip for each client, so those `Os` are misleading. I think to make things really fast one should use Lua to 

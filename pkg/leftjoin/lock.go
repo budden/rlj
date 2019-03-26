@@ -1,4 +1,4 @@
-package twohashes
+package leftjoin
 
 import (
 	"fmt"

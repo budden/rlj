@@ -1,7 +1,7 @@
 package main
 
-import "github.com/budden/rlj/pkg/twohashes"
+import "github.com/budden/rlj/pkg/leftjoin"
 
 func main() {
-	twohashes.Run()
+	leftjoin.Run()
 }
