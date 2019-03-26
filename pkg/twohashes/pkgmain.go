@@ -2,6 +2,7 @@
 package twohashes
 
 import (
+	"fmt"
 	"log"
 	"math/big"
 
@@ -57,4 +58,19 @@ func flushAndFillDb(rc *redis.Client) (err error) {
 		}
 	}
 	return
+}
+
+// PrintJoinedOrders prints a join of clients to orders
+func PrintJoinedOrders(rc *redis.Client) (err error) {
+	var clientsStrings map[string]string
+	clientsStrings, err = rc.HGetAll("client").Result()
+	if err != nil {
+		return
+	}
+	fmt.Print(clientsStrings)
+	return
+	//for clientID, clientString = range {
+	//
+	//}
+
 }
