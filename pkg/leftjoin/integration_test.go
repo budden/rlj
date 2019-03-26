@@ -1,14 +1,19 @@
 package leftjoin
 
 import (
-	"bytes"
-	"encoding/json"
 	"math/big"
 	"testing"
 
 	"github.com/budden/rlj/pkg/redisclient"
 	"github.com/stretchr/testify/assert"
 )
+
+func ordersEqual(o, o2 *Order) bool {
+	return o.ID == o2.ID &&
+		o.Clientid == o2.Clientid &&
+		o.Product == o2.Product &&
+		o.Total.Cmp(&o2.Total) == 0
+}
 
 // Beware that this test flushes and fills the DB!
 func TestSetAndGetOneOrder(t *testing.T) {
@@ -34,9 +39,7 @@ func TestSetAndGetOneOrder(t *testing.T) {
 	if err != nil {
 		return
 	}
-	oj, _ := json.Marshal(o)
-	o2j, _ := json.Marshal(o2)
-	assert.True(t, bytes.Equal(oj, o2j), "Saved value %v does not match retrieved value %v", oj, o2j)
+	assert.True(t, ordersEqual(o, o2), "Saved value %v does not match retrieved value %v", o, o2)
 
 	o2, err = GetOrderByID(rc, 2)
 	assert.Nilf(t, o2, "Found value %v for non-existing key", o2)
